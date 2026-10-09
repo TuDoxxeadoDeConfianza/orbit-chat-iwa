@@ -38,5 +38,28 @@ Variables opcionales:
 ## Publicar la web
 GitHub Actions ejecuta `npm test` y `npm run build`, y sube `dist/` como artefacto. Esto genera una web estática, no un paquete IWA firmado.
 
-## Sobre .swbn / Isolated Web Apps
-Un archivo con extensión `.swbn` no se puede fabricar renombrando un ZIP. Una IWA real requiere empaquetado firmado con las herramientas/formato de Isolated Web Apps y un método compatible de instalación. Este proyecto aún no genera un `.swbn` firmado ni es instalable como IWA.
+## Generar un .swbn firmado
+
+El workflow puede producir `orbit-chat.swbn` si configuras una clave de firma cifrada en **Settings → Secrets and variables → Actions** del repositorio. Añade dos secrets:
+
+- `IWA_SIGNING_KEY_PEM`: contenido completo de `encrypted_key.pem` (clave privada cifrada en formato PEM).
+- `IWA_SIGNING_PASSPHRASE`: la frase de contraseña de esa clave.
+
+Para generar la clave sin Linux local puedes abrir un **Codespace** desde el botón **Code → Codespaces** del repositorio y ejecutar en su terminal web:
+
+```bash
+openssl genpkey -algorithm Ed25519 -out private_key.pem
+openssl pkcs8 -in private_key.pem -topk8 -out encrypted_key.pem
+```
+
+OpenSSL pedirá una contraseña para cifrar la clave. Copia el contenido de `encrypted_key.pem` al secret `IWA_SIGNING_KEY_PEM` y usa esa contraseña para `IWA_SIGNING_PASSPHRASE`. Después elimina los archivos de clave del Codespace:
+
+```bash
+rm -f private_key.pem encrypted_key.pem
+```
+
+Nunca subas la clave privada al repositorio. La identidad de la IWA deriva de la clave; conserva los dos secrets para poder firmar futuras actualizaciones con la misma identidad. Cuando estén configurados, ve a **Actions → Orbit Chat CI → Run workflow**. El artefacto firmado aparecerá como `orbit-chat-iwa-swbn`. Si los secrets faltan, CI compilará y probará la web, pero omitirá el .swbn.
+
+La carpeta `public/.well-known/manifest.webmanifest` contiene el manifiesto requerido por IWA. El bundle se genera con herramientas compatibles con el flujo oficial de Web Bundles de Chrome.
+
+**Disponibilidad:** que el archivo esté firmado no garantiza que ChromeOS permita instalarlo en todos los dispositivos. El soporte de IWA puede depender de la versión, las políticas del dispositivo y la disponibilidad de la función en ChromeOS.

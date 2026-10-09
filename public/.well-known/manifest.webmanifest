@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "Orbit Chat",
+  "short_name": "Orbit",
+  "description": "Comunidades, canales y conversaciones.",
+  "version": "0.1.0",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#171821",
+  "theme_color": "#171821",
+  "icons": [
+    {
+      "src": "/icons/orbit.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}

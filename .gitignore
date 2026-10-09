@@ -4,3 +4,6 @@ dist/
 .env.*
 !.env.example
 .DS_Store
+
+# IWA signing keys must never be committed
+*.pem

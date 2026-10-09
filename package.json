@@ -7,13 +7,16 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node --test"
+    "test": "node --test",
+    "build:iwa": "BUILD_IWA=1 vite build"
   },
   "dependencies": {
     "@auth0/auth0-spa-js": "^2.4.0",
     "@supabase/supabase-js": "^2.57.0"
   },
   "devDependencies": {
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "rollup-plugin-webbundle": "^0.2.0",
+    "wbn-sign": "^0.2.4"
   }
 }

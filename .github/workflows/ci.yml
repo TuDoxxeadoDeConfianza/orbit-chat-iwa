@@ -32,3 +32,23 @@ jobs:
           name: orbit-chat-web-dist
           path: dist/
           if-no-files-found: error
+      - name: Build signed IWA bundle (requires repository secrets)
+        env:
+          IWA_SIGNING_KEY_PEM: ${{ secrets.IWA_SIGNING_KEY_PEM }}
+          IWA_SIGNING_PASSPHRASE: ${{ secrets.IWA_SIGNING_PASSPHRASE }}
+        run: |
+          if [ -z "$IWA_SIGNING_KEY_PEM" ] || [ -z "$IWA_SIGNING_PASSPHRASE" ]; then
+            echo "::notice::IWA signing skipped. Add IWA_SIGNING_KEY_PEM and IWA_SIGNING_PASSPHRASE repository secrets to produce a signed .swbn."
+            exit 0
+          fi
+          printf '%s\n' "$IWA_SIGNING_KEY_PEM" > "$RUNNER_TEMP/orbit-chat-encrypted-key.pem"
+          export IWA_SIGNING_KEY_PATH="$RUNNER_TEMP/orbit-chat-encrypted-key.pem"
+          npm run build:iwa
+          rm -f "$RUNNER_TEMP/orbit-chat-encrypted-key.pem"
+      - name: Upload signed IWA bundle
+        if: ${{ hashFiles('dist/*.swbn') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: orbit-chat-iwa-swbn
+          path: dist/*.swbn
+          if-no-files-found: error
