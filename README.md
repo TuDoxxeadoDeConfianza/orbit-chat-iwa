@@ -38,6 +38,8 @@ Variables opcionales:
 ## Publicar la web
 GitHub Actions ejecuta `npm test` y `npm run build`, y sube `dist/` como artefacto. Esto genera una web estática, no un paquete IWA firmado.
 
+Nota: los estilos no dependen de fuentes remotas para que el aspecto básico esté disponible también en el paquete offline.
+
 ## Generar un .swbn firmado
 
 El workflow puede producir `orbit-chat.swbn` si configuras una clave de firma cifrada en **Settings → Secrets and variables → Actions** del repositorio. Añade dos secrets:
